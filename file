@@ -10,3 +10,27 @@ def is_running_in_container():
     except FileNotFoundError:
         pass
     return False
+    
+    
+    
+    
+    
+    -------------------------------------------------
+    
+    
+    
+    
+    import os
+
+def is_running_in_container():
+    """
+    Returns True if the process is running inside a container, False otherwise.
+    """
+    # Check if /proc/1/cgroup exists and contains "docker", "containerd", "podman", "crio", or "apptainer"
+    if os.path.exists('/proc/1/cgroup'):
+        with open('/proc/1/cgroup', 'rt') as f:
+            cgroup = f.read()
+            return any(runtime in cgroup for runtime in ('docker', 'containerd', 'podman', 'crio', 'apptainer'))
+    # If /proc/1/cgroup doesn't exist, assume not in a container
+    return False
+
