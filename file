@@ -1,5 +1,5 @@
 def is_running_in_container():
-    """Return True if the current process is running inside a container."""
+    """Return True if the current process is running inside a container be it wither docker , containered, podman etc."""
     container_runtimes = ['docker', 'containerd', 'podman', 'crio', 'app']
     try:
         with open('/proc/1/cgroup', 'r') as f:
