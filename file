@@ -1,0 +1,12 @@
+def is_running_in_container():
+    """Return True if the current process is running inside a container."""
+    container_runtimes = ['docker', 'containerd', 'podman', 'crio', 'app']
+    try:
+        with open('/proc/1/cgroup', 'r') as f:
+            for line in f:
+                for runtime in container_runtimes:
+                    if runtime in line:
+                        return True
+    except FileNotFoundError:
+        pass
+    return False
