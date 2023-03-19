@@ -34,3 +34,49 @@ def is_running_in_container():
     # If /proc/1/cgroup doesn't exist, assume not in a container
     return False
 
+
+
+
+
+
+
+
+------------------------------------------------------------
+tests for the #1 code
+
+
+
+import unittest
+from unittest.mock import mock_open, patch
+from is_running_in_container import is_running_in_container
+
+class TestIsRunningInContainer(unittest.TestCase):
+
+    def test_container_detection(self):
+        # Test detection when running inside a container (Docker)
+        with patch('builtins.open', mock_open(read_data='11:hugetlb:/docker/123abc\n')):
+            self.assertTrue(is_running_in_container())
+
+        # Test detection when running inside a container (Podman)
+        with patch('builtins.open', mock_open(read_data='11:hugetlb:/podman/123abc\n')):
+            self.assertTrue(is_running_in_container())
+
+        # Test detection when running inside a container (CRI-O)
+        with patch('builtins.open', mock_open(read_data='11:hugetlb:/crio/123abc\n')):
+            self.assertTrue(is_running_in_container())
+
+        # Test detection when running inside a container (Containerd)
+        with patch('builtins.open', mock_open(read_data='11:hugetlb:/system.slice/containerd.service\n')):
+            self.assertTrue(is_running_in_container())
+
+        # Test detection when running inside a container (App Container)
+        with patch('builtins.open', mock_open(read_data='11:hugetlb:/appc/123abc\n')):
+            self.assertTrue(is_running_in_container())
+
+        # Test detection when not running inside a container
+        with patch('builtins.open', mock_open(read_data='11:hugetlb:/\n')):
+            self.assertFalse(is_running_in_container())
+
+if __name__ == '__main__':
+    unittest.main()
+
